@@ -1,4 +1,4 @@
-package com.sujeet.chatappdesign;
+package com.project.bff;
 
 import android.content.Context;
 
@@ -22,6 +22,6 @@ public class ExampleInstrumentedTest {
         // Context of the app under test.
         Context appContext = InstrumentationRegistry.getInstrumentation().getTargetContext();
 
-        assertEquals("com.sujeet.chatappdesign", appContext.getPackageName());
+        assertEquals("com.project.bff", appContext.getPackageName());
     }
 }

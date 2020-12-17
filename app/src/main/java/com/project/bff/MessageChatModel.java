@@ -1,4 +1,4 @@
-package com.sujeet.chatappdesign;
+package com.project.bff;
 
 public class MessageChatModel {
     private String text;

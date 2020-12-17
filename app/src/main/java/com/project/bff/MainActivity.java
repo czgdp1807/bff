@@ -1,4 +1,4 @@
-package com.sujeet.chatappdesign;
+package com.project.bff;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
