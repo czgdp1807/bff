@@ -45,15 +45,6 @@
             android:text="10:25 PM"
             android:textSize="12dp"></TextView>
 
-<!--        <ImageView-->
-<!--            android:layout_width="30dp"-->
-<!--            android:layout_height="30dp"-->
-<!--            android:padding="5dp"-->
-<!--            android:tint="#4a4a4a"-->
-<!--            android:src="@drawable/doubletick">-->
-
-<!--        </ImageView>-->
-
     </LinearLayout>
 
 
