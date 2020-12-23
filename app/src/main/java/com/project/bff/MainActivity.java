@@ -12,6 +12,7 @@ import android.widget.ImageView;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.project.dataapis.YouTubeDataFetcher;
+import com.project.emotionapis.EmotionRecognizer;
 
 import java.io.IOException;
 import java.sql.Time;
@@ -81,12 +82,17 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
-    private void generateMessageResponse(String msg) throws ExecutionException, InterruptedException {
+    private void generateMessageResponse(String msg)
+    throws ExecutionException,
+           InterruptedException
+    {
         YouTubeDataFetcher youTubeDataFetcher = new YouTubeDataFetcher();
         youTubeDataFetcher.setAPIKey();
         HashMap<String, String> query = new HashMap<String, String>();
+        EmotionRecognizer emotionRecognizer = new EmotionRecognizer();
+        emotionRecognizer.guessAndSetEmotion(msg);
+        query.put("q", emotionRecognizer.getSpaceSeparatedRemedyTerms());
         query.put("part", "snippet");
-        query.put("q", "brave");
         query.put("type", "video");
         Integer status = youTubeDataFetcher.execute(query).get();
         HashMap<String, String> msgInfo = youTubeDataFetcher.toHashMap();
