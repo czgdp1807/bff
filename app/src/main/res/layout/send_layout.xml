@@ -23,7 +23,8 @@
             android:layout_marginBottom="10dp"
             android:fontFamily="@font/opensansregular"
             android:text="Hello Amit Anand, How are you?"
-            android:textColor="#ffffff"></TextView>
+            android:textColor="#ffffff"
+            android:autoLink="web"></TextView>
 
     </LinearLayout>
 
