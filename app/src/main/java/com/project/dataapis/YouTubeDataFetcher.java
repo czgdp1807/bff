@@ -23,6 +23,14 @@ public class YouTubeDataFetcher extends AsyncTask<HashMap<String, String>, Boole
     private Integer responseCode;
     private String IOExceptioError;
 
+    public YouTubeDataFetcher()
+    {
+        APIKey = "";
+        data = null;
+        responseCode = 404;
+        IOExceptioError = "";
+    }
+
     @Override
     public void setAPIKey()
     {
