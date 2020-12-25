@@ -4,22 +4,20 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
-import android.media.midi.MidiOutputPort;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.ImageView;
 
-import com.fasterxml.jackson.databind.JsonNode;
 import com.project.dataapis.YouTubeDataFetcher;
 import com.project.emotionapis.EmotionRecognizer;
 
-import java.io.IOException;
-import java.sql.Time;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
+import java.util.Random;
+import java.util.RandomAccess;
 import java.util.TimeZone;
 import java.util.Calendar;
 import java.text.SimpleDateFormat;
@@ -35,6 +33,8 @@ public class MainActivity extends AppCompatActivity {
     EditText messageET;
     ImageView sendBtn;
     String dateFromat;
+    private static final String[] Resources = {"YouTube"};
+    private static final Random random = new Random();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -86,19 +86,27 @@ public class MainActivity extends AppCompatActivity {
     throws ExecutionException,
            InterruptedException
     {
-        YouTubeDataFetcher youTubeDataFetcher = new YouTubeDataFetcher();
-        youTubeDataFetcher.setAPIKey();
-        HashMap<String, String> query = new HashMap<String, String>();
         EmotionRecognizer emotionRecognizer = new EmotionRecognizer();
         emotionRecognizer.guessAndSetEmotion(msg);
-        query.put("q", emotionRecognizer.getSpaceSeparatedRemedyTerms());
-        query.put("part", "snippet");
-        query.put("type", "video");
-        Integer status = youTubeDataFetcher.execute(query).get();
-        HashMap<String, String> msgInfo = youTubeDataFetcher.toHashMap();
-        String responseMsg = "Checkout this video,\nTitle: " +
-                             msgInfo.get("title") + "\nLink: " +
-                             msgInfo.get("url");
-        addMessageToList(responseMsg, 1);
+        String guessedEmotion = emotionRecognizer.getEmotionName();
+        int resourceIndex = random.nextInt(Resources.length);
+        if( Resources[resourceIndex] == "YouTube" )
+        {
+            String guessedRemedy = emotionRecognizer.getSpaceSeparatedRemedyTerms();
+            YouTubeDataFetcher youTubeDataFetcher = new YouTubeDataFetcher();
+            youTubeDataFetcher.setAPIKey();
+            HashMap<String, String> query = new HashMap<String, String>();
+            query.put("q", guessedRemedy);
+            query.put("part", "snippet");
+            query.put("type", "video");
+            Integer status = youTubeDataFetcher.execute(query).get();
+            HashMap<String, String> msgInfo = youTubeDataFetcher.toHashMap();
+            String prefixResponseMessage = "It seems like you are feeling " + guessedEmotion + ". " +
+                    "May be you want to checkout some videos of " + guessedRemedy + ".\n\n";
+            String responseMsg = "Title: " +
+                    msgInfo.get("title") + "\nLink: " +
+                    msgInfo.get("url");
+            addMessageToList(prefixResponseMessage + responseMsg, 1);
+        }
     }
 }
