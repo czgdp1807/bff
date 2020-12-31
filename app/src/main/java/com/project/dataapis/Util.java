@@ -29,7 +29,7 @@ public class Util
 
     }
 
-    private static String toString(HashMap<String, String> queryMap)
+    public static String toString(HashMap<String, String> queryMap)
     {
         StringBuilder stringQueryBuilder = new StringBuilder();
         String prefix = "";
