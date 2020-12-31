@@ -2,19 +2,17 @@ package com.project.emotionapis;
 
 import android.util.Pair;
 
-import java.lang.reflect.Array;
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
-import java.util.Vector;
 
 public class EmotionRecognizer
 {
     private String emotionName;
     private static final HashSet<String> negationWords = new HashSet<String>();
     private static final HashMap<String, String> emotion2Remedy = new HashMap<String, String>();
+    private static final HashMap<String, String> emotion2Places = new HashMap<String, String>();
     private static HashMap<String, Pair<String, String>>
     word2InversionEmotion = new HashMap<String, Pair<String, String>>();
     private static Boolean isStaticInitialised = false;
@@ -32,6 +30,13 @@ public class EmotionRecognizer
             emotion2Remedy.put("angry", "calm, relax, or comedy content");
             emotion2Remedy.put("scared", "brave or courage content");
             emotion2Remedy.put("nothing", "nature vlogs");
+            emotion2Places.put("happy", "happy");
+            emotion2Places.put("excited", "adventure");
+            emotion2Places.put("tender", "park");
+            emotion2Places.put("sad", "therapy");
+            emotion2Places.put("angry", "temple");
+            emotion2Places.put("scared", "temple");
+            emotion2Places.put("nothing", "park");
             word2InversionEmotion.put("happy", new Pair<String, String>("sad", "happy"));
             word2InversionEmotion.put("sad", new Pair<String, String>("happy", "sad"));
             word2InversionEmotion.put("excited", new Pair<String, String>("tender", "excited"));
@@ -96,6 +101,11 @@ public class EmotionRecognizer
     public String getSpaceSeparatedRemedyTerms()
     {
         return emotion2Remedy.get(emotionName);
+    }
+
+    public String getRemedyPlaces()
+    {
+        return emotion2Places.get(emotionName);
     }
 
     public String getEmotionName()

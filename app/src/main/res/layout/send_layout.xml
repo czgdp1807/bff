@@ -24,7 +24,8 @@
             android:fontFamily="@font/opensansregular"
             android:text="Hello Amit Anand, How are you?"
             android:textColor="#ffffff"
-            android:autoLink="web"></TextView>
+            android:autoLink="web"
+            android:textIsSelectable="false"></TextView>
 
     </LinearLayout>
 

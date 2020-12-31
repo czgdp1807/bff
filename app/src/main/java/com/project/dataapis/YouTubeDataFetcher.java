@@ -1,6 +1,7 @@
 package  com.project.dataapis;
 
 import android.os.AsyncTask;
+import android.util.Pair;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -41,16 +42,9 @@ public class YouTubeDataFetcher extends AsyncTask<HashMap<String, String>, Boole
     {
         try
         {
-            queryMap.put("key", APIKey);
-            String queryURL = GoogleURLs.YouTube;
-            String stringQuery = toString(queryMap);
-            URL url = new URL(queryURL + "?" + stringQuery);
-            HttpURLConnection connection = (HttpURLConnection) url.openConnection();
-            connection.setRequestMethod("GET");
-            connection.connect();
-            ObjectMapper objectMapper = new ObjectMapper();
-            data = objectMapper.readTree(connection.getInputStream());
-            responseCode = connection.getResponseCode();
+            Pair<JsonNode, Integer> results = Util.fetchData(queryMap, APIKey, GoogleURLs.YouTube);
+            data = results.first;
+            responseCode = results.second;
         }
         catch (IOException e)
         {
@@ -58,21 +52,7 @@ public class YouTubeDataFetcher extends AsyncTask<HashMap<String, String>, Boole
         }
     }
 
-    private String toString(HashMap<String, String> queryMap)
-    {
-        StringBuilder stringQueryBuilder = new StringBuilder();
-        String prefix = "";
-        for( Map.Entry<String, String> query : queryMap.entrySet() )
-        {
-            String key = query.getKey(), value = query.getValue();
-            stringQueryBuilder.append(prefix + key + "=" + value);
-            prefix = "&";
-        }
-        String stringQuery = stringQueryBuilder.toString();
-        String formattedStringQuery = stringQuery.replaceAll(" ", "%20");
-        return formattedStringQuery;
-    }
-
+    @Override
     public HashMap<String, String> toHashMap()
     {
         HashMap<String, String> resultInfo = new HashMap<String, String>();
