@@ -5,6 +5,7 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 
+import android.content.res.AssetFileDescriptor;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.EditText;
@@ -15,7 +16,13 @@ import com.project.dataapis.YouTubeDataFetcher;
 import com.project.emotionapis.EmotionRecognizer;
 import com.project.location.LocationTrack;
 
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.IOException;
+import java.nio.MappedByteBuffer;
+import java.nio.channels.FileChannel;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 
@@ -26,6 +33,8 @@ import java.util.Calendar;
 import java.text.SimpleDateFormat;
 import java.util.concurrent.ExecutionException;
 
+import org.tensorflow.lite.Interpreter;
+
 public class MainActivity extends AppCompatActivity
 {
     List<MessageChatModel> messageChatModelList =  new ArrayList<>();
@@ -35,7 +44,7 @@ public class MainActivity extends AppCompatActivity
     EditText messageET;
     ImageView sendBtn;
     String dateFromat;
-    private static final String[] Resources = {"YouTube", "Places"};
+    private static final String[] Resources = {"YouTube", "Places", "OnDeviceBot"};
     private static final Random random = new Random();
 
     @Override
@@ -139,6 +148,7 @@ public class MainActivity extends AppCompatActivity
         EmotionRecognizer emotionRecognizer = new EmotionRecognizer();
         emotionRecognizer.guessAndSetEmotion(msg);
         int resourceIndex = random.nextInt(Resources.length);
+        resourceIndex = 2;
         if( Resources[resourceIndex] == "YouTube" )
         {
             fetchAndShowYouTubeData(emotionRecognizer);
@@ -168,5 +178,38 @@ public class MainActivity extends AppCompatActivity
                 fetchAndShowYouTubeData(emotionRecognizer);
             }
         }
+        else if( Resources[resourceIndex] == "OnDeviceBot" )
+        {
+            try {
+                Interpreter tflite = new Interpreter(loadModelFile());
+                float x[][][] = {{{0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0},
+ {0, 0, 0, 0, 0, 0, 0, 0, 0,  1,  0, 0},
+ {0, 0, 0, 0, 0, 0, 0,  1,  0, 0, 0, 0},
+ {0, 1,  0, 0, 0, 0, 0, 0, 0, 0, 0, 0},
+ {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,  1},
+ {0, 0, 0,  1,  0, 0, 0, 0, 0, 0, 0, 0},
+ {0, 0, 0, 0, 0, 0, 0, 0, 0, 0,  1,  0}}};
+                float[][][] y = new float[1][4][12];
+                tflite.run(x, y);
+                addMessageToList(Float.toString(y[0][0][0]), 1);
+            } catch (Exception e) {
+                addMessageToList(e.toString(), 1);
+            }
+        }
+    }
+
+    /** Memory-map the model file in Assets. */
+    private MappedByteBuffer loadModelFile() throws IOException {
+        AssetFileDescriptor fileDescriptor = getAssets().openFd(getModelPath());
+        FileInputStream inputStream = new FileInputStream(fileDescriptor.getFileDescriptor());
+        FileChannel fileChannel = inputStream.getChannel();
+        long startOffset = fileDescriptor.getStartOffset();
+        long declaredLength = fileDescriptor.getDeclaredLength();
+        return fileChannel.map(FileChannel.MapMode.READ_ONLY, startOffset, declaredLength);
+    }
+
+    private String getModelPath()
+    {
+        return new String("converted_model.tflite");
     }
 }
