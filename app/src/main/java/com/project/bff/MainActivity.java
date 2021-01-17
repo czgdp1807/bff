@@ -1,15 +1,13 @@
 package com.project.bff;
 
-import androidx.appcompat.app.AppCompatActivity;
-import androidx.recyclerview.widget.LinearLayoutManager;
-import androidx.recyclerview.widget.RecyclerView;
-
-
-import android.content.res.AssetFileDescriptor;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.ImageView;
+
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 
 import com.project.dataapis.PlacesDataFetcher;
 import com.project.dataapis.YouTubeDataFetcher;
@@ -17,28 +15,17 @@ import com.project.emotionapis.EmotionRecognizer;
 import com.project.location.LocationTrack;
 import com.project.ondevicebot.OnDeviceBotLength1_5;
 
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.IOException;
-import java.nio.MappedByteBuffer;
-import java.nio.channels.FileChannel;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Arrays;
+import java.util.Calendar;
 import java.util.HashMap;
 import java.util.List;
-
 import java.util.Random;
-import java.util.RandomAccess;
 import java.util.TimeZone;
-import java.util.Calendar;
-import java.text.SimpleDateFormat;
 import java.util.concurrent.ExecutionException;
 
-import org.tensorflow.lite.Interpreter;
-
-public class MainActivity extends AppCompatActivity
-{
-    List<MessageChatModel> messageChatModelList =  new ArrayList<>();
+public class MainActivity extends AppCompatActivity {
+    List<MessageChatModel> messageChatModelList = new ArrayList<>();
     RecyclerView recyclerView;
     MessageChatAdapter adapter;
 
@@ -49,27 +36,25 @@ public class MainActivity extends AppCompatActivity
     private static final Random random = new Random();
 
     @Override
-    protected void onCreate(Bundle savedInstanceState)
-    {
+    protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        messageET = (EditText)findViewById(R.id.messageET);
+        messageET = (EditText) findViewById(R.id.messageET);
         sendBtn = (ImageView) findViewById(R.id.sendBtn);
         dateFromat = "dd-MMM-yyyy, kk:mm z";
 
-        recyclerView = (RecyclerView)findViewById(R.id.recycler_view);
+        recyclerView = (RecyclerView) findViewById(R.id.recycler_view);
         LinearLayoutManager manager = new LinearLayoutManager(MainActivity.this, RecyclerView.VERTICAL, false);
         manager.setStackFromEnd(true);
         recyclerView.setLayoutManager(manager);
 
-        adapter = new MessageChatAdapter(messageChatModelList, MainActivity.this );
+        adapter = new MessageChatAdapter(messageChatModelList, MainActivity.this);
         recyclerView.setAdapter(adapter);
 
     }
 
-    private void addMessageToList(String message, int viewType)
-    {
+    private void addMessageToList(String message, int viewType) {
         TimeZone timeZone = TimeZone.getDefault();
         Calendar calendar = Calendar.getInstance(timeZone);
         SimpleDateFormat simpleDateFormat = new SimpleDateFormat(dateFromat);
@@ -87,8 +72,7 @@ public class MainActivity extends AppCompatActivity
     public void sendMessage(View v) throws InterruptedException, ExecutionException {
 
         String msg = messageET.getText().toString();
-        if( msg.length() > 0 )
-        {
+        if (msg.length() > 0) {
             addMessageToList(msg, 0);
             messageET.setText("");
             generateMessageResponse(msg);
@@ -96,9 +80,8 @@ public class MainActivity extends AppCompatActivity
     }
 
     private void fetchAndShowYouTubeData(EmotionRecognizer emotionRecognizer)
-    throws ExecutionException,
-           InterruptedException
-    {
+            throws ExecutionException,
+            InterruptedException {
         String guessedEmotion = emotionRecognizer.getEmotionName();
         String guessedRemedy = emotionRecognizer.getSpaceSeparatedRemedyTerms();
         YouTubeDataFetcher youTubeDataFetcher = new YouTubeDataFetcher();
@@ -118,9 +101,8 @@ public class MainActivity extends AppCompatActivity
     }
 
     private void fetchAndShowPlacesData(EmotionRecognizer emotionRecognizer, LocationTrack locationTrack)
-    throws ExecutionException,
-           InterruptedException
-    {
+            throws ExecutionException,
+            InterruptedException {
         String longitude = Double.toString(locationTrack.getLongitude());
         String latitude = Double.toString(locationTrack.getLatitude());
         String guessedPlace = emotionRecognizer.getRemedyPlaces();
@@ -143,8 +125,8 @@ public class MainActivity extends AppCompatActivity
     }
 
     private void generateMessageResponse(String msg)
-    throws ExecutionException,
-           InterruptedException {
+            throws ExecutionException,
+            InterruptedException {
         EmotionRecognizer emotionRecognizer = new EmotionRecognizer();
         emotionRecognizer.guessAndSetEmotion(msg);
         int resourceIndex = random.nextInt(Resources.length);
@@ -171,7 +153,7 @@ public class MainActivity extends AppCompatActivity
         } else if (Resources[resourceIndex] == "OnDeviceBot") {
             String resp = "I don't know what to say";
             int msgLength = computeMessageLentgh(msg);
-            if( 1 <= msgLength && msgLength <= 5 ) {
+            if (1 <= msgLength && msgLength <= 5) {
                 OnDeviceBotLength1_5 bot = new OnDeviceBotLength1_5(this);
                 resp = bot.generateResponse(msg);
             }
@@ -179,9 +161,8 @@ public class MainActivity extends AppCompatActivity
         }
     }
 
-    private int computeMessageLentgh(String msg)
-    {
-        if( msg != null ) {
+    private int computeMessageLentgh(String msg) {
+        if (msg != null) {
             return msg.split(" ").length;
         }
         return 0;
