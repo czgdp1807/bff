@@ -148,7 +148,7 @@ public class MainActivity extends AppCompatActivity
         EmotionRecognizer emotionRecognizer = new EmotionRecognizer();
         emotionRecognizer.guessAndSetEmotion(msg);
         int resourceIndex = random.nextInt(Resources.length);
-        resourceIndex = 2;
+        resourceIndex = 2; // Temporarily until final development completes
         if (Resources[resourceIndex] == "YouTube") {
             fetchAndShowYouTubeData(emotionRecognizer);
         } else if (Resources[resourceIndex] == "Places") {
