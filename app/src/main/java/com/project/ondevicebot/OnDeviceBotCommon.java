@@ -18,7 +18,7 @@ public class OnDeviceBotCommon
     {
         try
         {
-            AssetFileDescriptor fileDescriptor = mainActivity.getAssets().openFd(getModelPath());
+            AssetFileDescriptor fileDescriptor = mainActivity.getAssets().openFd(this.getModelPath());
             FileInputStream inputStream = new FileInputStream(fileDescriptor.getFileDescriptor());
             FileChannel fileChannel = inputStream.getChannel();
             long startOffset = fileDescriptor.getStartOffset();

@@ -8,6 +8,7 @@ import org.tensorflow.lite.Interpreter;
 import org.python.modules.cPickle;
 
 import java.io.IOException;
+import java.nio.MappedByteBuffer;
 
 public class OnDeviceBotLength1_5
        extends OnDeviceBotCommon implements OnDeviceBot
@@ -31,11 +32,12 @@ public class OnDeviceBotLength1_5
     {
         if( tflite == null )
         {
-            tflite = new Interpreter(loadModelFile(mainActivity));
-            if( tflite == null )
+            MappedByteBuffer model = loadModelFile(mainActivity);
+            if( model == null )
             {
                 return ioException;
             }
+            tflite = new Interpreter(model);
         }
 
         cPickle pickler = new cPickle();
