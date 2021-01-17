@@ -41,6 +41,4 @@ dependencies {
 
     implementation 'org.tensorflow:tensorflow-lite:2.4.0'
 
-    implementation group: 'org.python', name: 'jython', version: '2.7.0'
-
 }
