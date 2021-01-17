@@ -15,6 +15,7 @@ import com.project.dataapis.PlacesDataFetcher;
 import com.project.dataapis.YouTubeDataFetcher;
 import com.project.emotionapis.EmotionRecognizer;
 import com.project.location.LocationTrack;
+import com.project.ondevicebot.OnDeviceBotLength1_5;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -143,73 +144,52 @@ public class MainActivity extends AppCompatActivity
 
     private void generateMessageResponse(String msg)
     throws ExecutionException,
-           InterruptedException
-    {
+           InterruptedException {
         EmotionRecognizer emotionRecognizer = new EmotionRecognizer();
         emotionRecognizer.guessAndSetEmotion(msg);
         int resourceIndex = random.nextInt(Resources.length);
         resourceIndex = 2;
-        if( Resources[resourceIndex] == "YouTube" )
-        {
+        if (Resources[resourceIndex] == "YouTube") {
             fetchAndShowYouTubeData(emotionRecognizer);
-        }
-        else if( Resources[resourceIndex] == "Places" )
-        {
+        } else if (Resources[resourceIndex] == "Places") {
             LocationTrack locationTrack = new LocationTrack(MainActivity.this);
-            if( locationTrack.checkGPS() )
-            {
+            if (locationTrack.checkGPS()) {
                 locationTrack.setLocation();
-                if( locationTrack.getLocation() == null )
-                {
+                if (locationTrack.getLocation() == null) {
                     fetchAndShowYouTubeData(emotionRecognizer);
-                }
-                else
-                {
+                } else {
                     fetchAndShowPlacesData(emotionRecognizer, locationTrack);
                 }
-            }
-            else
-            {
+            } else {
                 String backupMessage = "Hey! It seems like your GPS is not enabled." +
-                                       "Enable your GPS so that I can know where you are " +
-                                       "and we will go out together at some nearby places.\n" +
-                                       "Meanwhile, I am looking for something else for you.";
+                        "Enable your GPS so that I can know where you are " +
+                        "and we will go out together at some nearby places.\n" +
+                        "Meanwhile, I am looking for something else for you.";
                 addMessageToList(backupMessage, 1);
                 fetchAndShowYouTubeData(emotionRecognizer);
             }
-        }
-        else if( Resources[resourceIndex] == "OnDeviceBot" )
-        {
-            try {
-                Interpreter tflite = new Interpreter(loadModelFile());
-                float x[][][] = {{{0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0},
- {0, 0, 0, 0, 0, 0, 0, 0, 0,  1,  0, 0},
- {0, 0, 0, 0, 0, 0, 0,  1,  0, 0, 0, 0},
- {0, 1,  0, 0, 0, 0, 0, 0, 0, 0, 0, 0},
- {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,  1},
- {0, 0, 0,  1,  0, 0, 0, 0, 0, 0, 0, 0},
- {0, 0, 0, 0, 0, 0, 0, 0, 0, 0,  1,  0}}};
-                float[][][] y = new float[1][4][12];
-                tflite.run(x, y);
-                addMessageToList(Float.toString(y[0][0][0]), 1);
-            } catch (Exception e) {
-                addMessageToList(e.toString(), 1);
-            }
+        } else if (Resources[resourceIndex] == "OnDeviceBot") {
+//            try {
+//                Interpreter tflite = new Interpreter(loadModelFile());
+//                float x[][][] = {{{0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0},
+// {0, 0, 0, 0, 0, 0, 0, 0, 0,  1,  0, 0},
+// {0, 0, 0, 0, 0, 0, 0,  1,  0, 0, 0, 0},
+// {0, 1,  0, 0, 0, 0, 0, 0, 0, 0, 0, 0},
+// {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,  1},
+// {0, 0, 0,  1,  0, 0, 0, 0, 0, 0, 0, 0},
+// {0, 0, 0, 0, 0, 0, 0, 0, 0, 0,  1,  0}}};
+//                float[][][] y = new float[1][4][12];
+//                tflite.run(x, y);
+//                addMessageToList(Float.toString(y[0][0][0]), 1);
+//            } catch (Exception e) {
+//                addMessageToList(e.toString(), 1);
+//            }
+//        }
+            OnDeviceBotLength1_5 bot = new OnDeviceBotLength1_5();
+            String resp = bot.generateResponse(new String("Random"), this);
+            addMessageToList(resp, 1);
         }
     }
 
-    /** Memory-map the model file in Assets. */
-    private MappedByteBuffer loadModelFile() throws IOException {
-        AssetFileDescriptor fileDescriptor = getAssets().openFd(getModelPath());
-        FileInputStream inputStream = new FileInputStream(fileDescriptor.getFileDescriptor());
-        FileChannel fileChannel = inputStream.getChannel();
-        long startOffset = fileDescriptor.getStartOffset();
-        long declaredLength = fileDescriptor.getDeclaredLength();
-        return fileChannel.map(FileChannel.MapMode.READ_ONLY, startOffset, declaredLength);
-    }
 
-    private String getModelPath()
-    {
-        return new String("converted_model.tflite");
-    }
 }
