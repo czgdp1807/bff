@@ -169,26 +169,22 @@ public class MainActivity extends AppCompatActivity
                 fetchAndShowYouTubeData(emotionRecognizer);
             }
         } else if (Resources[resourceIndex] == "OnDeviceBot") {
-//            try {
-//                Interpreter tflite = new Interpreter(loadModelFile());
-//                float x[][][] = {{{0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0},
-// {0, 0, 0, 0, 0, 0, 0, 0, 0,  1,  0, 0},
-// {0, 0, 0, 0, 0, 0, 0,  1,  0, 0, 0, 0},
-// {0, 1,  0, 0, 0, 0, 0, 0, 0, 0, 0, 0},
-// {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,  1},
-// {0, 0, 0,  1,  0, 0, 0, 0, 0, 0, 0, 0},
-// {0, 0, 0, 0, 0, 0, 0, 0, 0, 0,  1,  0}}};
-//                float[][][] y = new float[1][4][12];
-//                tflite.run(x, y);
-//                addMessageToList(Float.toString(y[0][0][0]), 1);
-//            } catch (Exception e) {
-//                addMessageToList(e.toString(), 1);
-//            }
-//        }
-            OnDeviceBotLength1_5 bot = new OnDeviceBotLength1_5();
-            String resp = bot.generateResponse(new String("Random"), this);
+            String resp = "I don't know what to say";
+            int msgLength = computeMessageLentgh(msg);
+            if( 1 <= msgLength && msgLength <= 5 ) {
+                OnDeviceBotLength1_5 bot = new OnDeviceBotLength1_5(this);
+                resp = bot.generateResponse(msg);
+            }
             addMessageToList(resp, 1);
         }
+    }
+
+    private int computeMessageLentgh(String msg)
+    {
+        if( msg != null ) {
+            return msg.split(" ").length;
+        }
+        return 0;
     }
 
 
