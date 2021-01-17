@@ -18,8 +18,7 @@ android {
         }
     }
     aaptOptions {
-        noCompress "tflite"
-        noCompress "pkl"
+        noCompress "tflite", "txt"
     }
 }
 
