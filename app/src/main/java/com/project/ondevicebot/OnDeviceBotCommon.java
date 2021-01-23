@@ -90,10 +90,24 @@ public class OnDeviceBotCommon
             if( maxIdx == 0 )
             {
                 respMsg.append('.');
+                break;
             }
             else
             {
-                respMsg.append(idx2word.get(maxIdx));
+                String word = idx2word.get(maxIdx);
+                if( word.charAt(0) == '?' )
+                {
+                    respMsg.append(word);
+                    break;
+                }
+                else if( word.charAt(0) == '\'' )
+                {
+                    respMsg.append(word);
+                }
+                else
+                {
+                    respMsg.append(" " + word);
+                }
             }
         }
         return respMsg.toString();
